@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	caesar "caesar/cipher"
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
@@ -13,7 +14,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 type CipherData struct {
@@ -92,37 +92,6 @@ func newfileUploadRequest(uri string, params map[string]string, paramName, path 
 	return req, err
 }
 
-// Rotate Latin letters by the shift amount.
-func rotate(text string, shift int) string {
-	shift = (shift%26 + 26) % 26 // [0, 25]
-	b := make([]byte, len(text))
-	for i := 0; i < len(text); i++ {
-		t := text[i]
-		var a int
-		switch {
-		case 'a' <= t && t <= 'z':
-			a = 'a'
-		case 'A' <= t && t <= 'Z':
-			a = 'A'
-		default:
-			b[i] = t
-			continue
-		}
-		b[i] = byte(a + ((int(t)-a)+shift)%26)
-	}
-	return string(b)
-}
-
-// Encode using Caesar Cipher.
-func Encode(plain string, shift int) (cipher string) {
-	return rotate(strings.ToLower(plain), shift)
-}
-
-// Decode using Caesar Cipher.
-func Decode(cipher string, shift int) (plain string) {
-	return rotate(strings.ToLower(cipher), -shift)
-}
-
 func main() {
 	fileName := "answer.json"
 
@@ -136,7 +105,7 @@ func main() {
 	var raw map[string]interface{}
 	json.Unmarshal(fileData, &raw)
 
-	raw["decifrado"] = Decode(raw["cifrado"].(string), int((raw["numero_casas"].(float64))))
+	raw["decifrado"] = caesar.Decode(raw["cifrado"].(string), int((raw["numero_casas"].(float64))))
 	raw["resumo_criptografico"] = getSha1([]byte(raw["decifrado"].(string)))
 
 	b, _ := json.Marshal(raw)

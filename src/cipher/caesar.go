@@ -1,5 +1,7 @@
 package caesar
 
+import "strings"
+
 // Rotate Latin letters by the shift amount.
 func rotate(text string, shift int) string {
 	shift = (shift%26 + 26) % 26 // [0, 25]
@@ -23,10 +25,10 @@ func rotate(text string, shift int) string {
 
 // Encode using Caesar Cipher.
 func Encode(plain string, shift int) (cipher string) {
-	return rotate(plain, shift)
+	return rotate(strings.ToLower(plain), shift)
 }
 
 // Decode using Caesar Cipher.
 func Decode(cipher string, shift int) (plain string) {
-	return rotate(cipher, -shift)
+	return rotate(strings.ToLower(cipher), -shift)
 }
