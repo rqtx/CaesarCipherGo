@@ -16,14 +16,6 @@ import (
 	"path/filepath"
 )
 
-type CipherData struct {
-	numero_casas         string
-	token                string
-	cifrado              string
-	decifrado            string
-	resumo_criptografico string
-}
-
 var TOKEN = "d3015fefa4bee006752f264e0a28c28ce9f7b77a"
 
 func getData() []byte {
